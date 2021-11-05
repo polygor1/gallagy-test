@@ -12,9 +12,28 @@
 </head>
 
 <body>
-  <!-- Так добавляются фрагменты в главные HTML-файлы страниц. -->
-  <include src="./partials/searshForm.html"></include>
-  <ul class="gallary js-gallagy"></ul>
+  <header class="header">
+    <div class="container">
+      <include src="./partials/searshForm.html"></include>
+    </div>
+  </header>
+
+  <main>
+    <div class="container content" id="infinite-scroll">
+      <ul class="gallery js-gallery"></ul>
+    </div>
+
+    <!-- <button type="button" class="btn load-more-btn is-hidden" data-action="load-more" id="load-more-button">
+      <span class="label">Load more</span>
+    </button> -->
+
+    <div>
+      <include src="./partials/modal.html"></include>
+    </div>
+  </main>
+
+  <footer>
+  </footer>
   <!-- Скрипт идёт последним в разметке. В нём уже подключен главный SASS-файл. -->
   <script src="./index.js"></script>
 </body>

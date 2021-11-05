@@ -6,24 +6,6 @@ $big: 'Montserrat', sans-serif;
 $dark: rgb(64, 64, 64);
 $blue: #276fbf;
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-img {
-  display: block;
-}
-
-body {
-  font-family: $font;
-  min-height: 100vh;
-  height: auto;
-
-  color: $dark;
-}
-
 ul {
   margin: 0;
   padding: 0;
@@ -33,25 +15,25 @@ ul {
 .search-form {
   display: flex;
   justify-content: center;
-  margin-top: 40px;
-  margin-bottom: 40px;
+  padding: 10px;
 }
 
-.search-input {
+.searsh-input {
   margin-right: 20px;
-  height: 50px;
+  height: 48px;
   width: 400px;
   padding-left: 20px;
-  font-size: 16px;
+  font-size: 26px;
   color: $blue;
+  border: none;
 }
 
-.gallery {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  padding: 0;
-}
+// .gallery {
+//   display: flex;
+//   flex-wrap: wrap;
+//   justify-content: center;
+//   padding: 0;
+// }
 
 .btn {
   display: block;
@@ -85,11 +67,7 @@ ul {
   justify-content: center;
 }
 
-img {
-  height: 300px;
-  width: 400px;
-  object-fit: cover;
-}
+
 
 .load-more-btn {
   margin: 0 auto;

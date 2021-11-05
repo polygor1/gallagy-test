@@ -3,15 +3,18 @@ const API_KEY = '24123899-30dafe3a116d297502be19e37'; //мой
     
 export default async function getList(searshDate) {  
   try {
+    console.log('page:', searshDate.page)
     const url = `${DATA_URL}?image_type=${searshDate.imgType}&orientation=${searshDate.orient}&q=${searshDate.query}&page=${searshDate.page}&per_page=${searshDate.perPage}&key=${API_KEY}`;
 
     const response = await fetch(url); // получаем ответ от сервера
     const data = await response.json(); // преобразуем в JSON
-    console.log(data)// ======= baging
+    console.log('return ', data.hits)    // ======= baging
+
     searshDate.page += 1;
     return data.hits; // возвращаем полученные данные
   }
   catch (error) {
     console.log(error);
+    // return [];
   }
 }
