@@ -5,21 +5,39 @@ import error from './js/pnotify';
 import {refs} from './js/refs';
 import imgTemplate from './template/imgCard';
 import getList from './js/getList';
-// import LoadMoreBtn from './js/loadMoreBtn';
 
-// const loadMoreBtn = new LoadMoreBtn({
-//   selector: '[data-action="load-more"]',
-//   hidden: true,
-// });
-
-// const element = document.getElementById('load-more-button');
-let countPage = 1;
+let searshDate = {
+      query: '',
+      page: 1,
+      perPage : 12,
+      imgType : 'photo',
+      orient : 'horizontal',
+    };
 // ========= main start ===========
 
 // Вводим строку в input и ждем
 refs.input.addEventListener('input',
   debounce(getSearchString, 750),
 );
+// почти вечный скрол 
+window.addEventListener("scroll", function(){
+  const block = document.getElementById('infinite-scroll');
+  // console.log(block)
+  let y = 0;
+  const contentHeight = block.offsetHeight; // высота блока контента вместе с границами
+  let yOffset       = window.pageYOffset;   // текущее положение скролбара
+  let window_height = window.innerHeight;   // высота внутренней области окна документа
+  y = Math.max(y, Math.ceil(yOffset + window_height)); // шаманство
+  // если доскролил до конца загруженного массива
+  if (y >= contentHeight) {
+    searshDate.page += 1;
+    getList({ ...searshDate })
+    .then(array => showResult(array))
+    .catch(error => errorRequest(error));
+  }
+});
+
+console.log('ales gut!')
 // ========= main end =============
 
 // Проверяем значение с инпута 
@@ -33,65 +51,22 @@ function getSearchString(event) {
     return;
   };
 // если норм лезем искать по списку в сети и получаем array или ругаемся
+  searshDate.query = inputValue;
+  searshDate.page = 1;
+  console.log(searshDate)
   clearScreen();
-  getList({
-    query: inputValue,
-    page: 1,
-    perPage : 12,
-    imgType : 'photo',
-    orient: 'horizontal',
-  })
+  getList({ ...searshDate })
     .then(array => showResult(array))
     .catch(error => errorRequest(error));
-  
 };
-console.log('ales!')
+
 // Выводим значение 
 function showResult(array) {
     // Добавляем новую разметку для элементов
-  displayTemplate(array);
-
-  window.addEventListener("scroll", function(){
-
-    const block = document.getElementById('infinite-scroll');
-    // console.log(block)
-    let y = 0;
-    const contentHeight = block.offsetHeight; // высота блока контента вместе с границами
-    let yOffset       = window.pageYOffset;   // текущее положение скролбара
-    let window_height = window.innerHeight;   // высота внутренней области окна документа
-    y = Math.max(y, Math.ceil(yOffset + window_height));
-    
-    // если пользователь достиг конца
-    if (y >= contentHeight) {  
-      // countPage += 1;
-      // getList({
-      //           query: inputValue,
-      //           page: countPage,
-      //           perPage : 12,
-      //           imgType : 'photo',
-      //           orient : 'horizontal',
-      // })
-      // .then(array => showResult(array, inputValue))
-      // .catch(error => errorRequest(error));
-      // console.log('>>',array)//загружаем новое содержимое 
-
-
-      // displayTemplate(array);
-    }
-  });
-};
-
-function displayTemplate(array) {
   const markup = imgTemplate(array);
   refs.elementContainer.insertAdjacentHTML('beforeend', markup);
-}
-// Создаем разметку для элемента по шаблону из .hbs
-function showContentsElement(array) {
-  // window.addEventListener('keydown', onKeyPress);
-  // window.addEventListener('click', onOverlayClick);
-
-
 };
+
 // сообщние об ошибке
 function errorRequest(message){
   error({
@@ -107,7 +82,7 @@ function clearScreen() {
 }
 // чистка контента
 function clearContent() {
-  countPage = 1;
+  searshDate.page = 1;
   refs.input.value = '';
   refs.gallaryList.innerHTML = '';
   refs.elementContainer.innerHTML = '';  
