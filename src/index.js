@@ -6,6 +6,12 @@ import {refs} from './js/refs';
 import imgTemplate from './template/imgCard';
 import getList from './js/getList';
 
+// const allImg = refs.galleryList.querySelectorAll(".photo-img");
+const lightBoxModal = document.querySelector(".js-lightbox");
+const closeModalBtn = lightBoxModal.querySelector('[data-action="close-lightbox"]');
+
+let allImg = '';
+
 let searshDate = {
       query: '',
       page: 1,
@@ -13,14 +19,16 @@ let searshDate = {
       imgType : 'photo',
       orient : 'horizontal',
 };
-    
+
+let countTarget = 0;
+
 // ========= main start ===========
 
 // Вводим строку в input и ждем
 refs.input.addEventListener('input',
   debounce(getSearchString, 750),
 );
-// почти вечный скрол 
+// почти вечный scroll 
 window.addEventListener("scroll", function(){
   const block = document.getElementById('infinite-scroll');
   // console.log(block)
@@ -54,20 +62,19 @@ function getSearchString(event) {
 // если норм лезем искать по списку в сети и получаем array или ругаемся
   searshDate.query = inputValue;
   searshDate.page = 1;
-  console.log(searshDate)
   clearScreen();
   getList({ ...searshDate })
     .then(array => showResult(array))
     .catch(error => errorRequest(error));
 };
-
 // Выводим значение 
 function showResult(array) {
-    // Добавляем новую разметку для элементов
+  // Добавляем новую разметку для элементов
   const markup = imgTemplate(array);
   refs.elementContainer.insertAdjacentHTML('beforeend', markup);
+  // слушаем клик по галлерее
+  refs.galleryList.addEventListener("click", onOpenModal);
 };
-
 // сообщние об ошибке
 function errorRequest(message){
   error({
@@ -78,30 +85,84 @@ function errorRequest(message){
 };
 // чистка экрана
 function clearScreen() {
-  refs.gallaryList.innerHTML = '';
+  refs.galleryList.innerHTML = '';
   refs.elementContainer.innerHTML = '';
 }
 // чистка контента
 function clearContent() {
   searshDate.page = 1;
   refs.input.value = '';
-  refs.gallaryList.innerHTML = '';
+  refs.galleryList.innerHTML = '';
   refs.elementContainer.innerHTML = '';  
 };
-// вываливание по ESC
+
+// ======== light modal ==========
+
+function lightBoxImg(original, description) {
+  const imgView = document.querySelector(".lightbox__image");
+  imgView.setAttribute('src', original);
+  imgView.setAttribute('alt', description);
+};
+
+function lightBoxImgView(arrayImg, number) {
+  lightBoxImg(arrayImg[number].dataset.source, arrayImg[number].alt);
+};
+
+function onOpenModal(event) {
+  event.preventDefault();
+  const target = event.target;
+  const numberTarget = [...refs.galleryList.childNodes].indexOf(target.parentNode.parentNode, 0);
+  countTarget = numberTarget/2;
+  if (target.nodeName !== "IMG") return;
+  window.addEventListener('keydown', onKeyPress);
+  closeModalBtn.addEventListener('click', onCloseModal);
+  lightBoxModal.addEventListener('click', onOverlayClick);
+  lightBoxModal.classList.add('is-open');
+
+  allImg = refs.galleryList.querySelectorAll(".photo-img");
+
+  lightBoxImgView(allImg, countTarget);
+};
+
+function onCloseModal() {
+  lightBoxImg("", "")
+  window.removeEventListener('keydown', onKeyPress);
+  lightBoxModal.removeEventListener('click', onOverlayClick);
+  closeModalBtn.removeEventListener('click', onCloseModal);
+  lightBoxModal.classList.remove('is-open');
+};
+
+function onOverlayClick(event) {
+  const target = event.target;
+  if (target.classList.value === "lightbox__overlay") {
+    onCloseModal();
+  }
+};
+
 function onKeyPress(event) {
   switch (event.code) {
     case 'Escape': {
-      clearContent();
+      onCloseModal();
       break;
-      // можно еще case добавить
     };
-  }
-};
-// вываливание по клику мышкой на экране
-function onOverlayClick(event) {
-  const target = event.target;
-  if (target.classList.value === "screen__overlay") {
-    clearContent();
-  }
+    case 'ArrowLeft': {
+      if (countTarget > 0) countTarget -= 2;
+      break;
+    };
+    case 'ArrowRight': {
+      if (countTarget < allImg.length - 2) countTarget += 2;
+      break;
+    };
+    case 'ArrowDown': {
+      if (countTarget <= 0) countTarget = allImg.length;
+      countTarget -= 2;
+      break;
+    };
+    case 'ArrowUp': {
+      if (countTarget >= allImg.length - 2) countTarget = -2;
+      countTarget += 2;
+      break;
+    };
+  };
+  lightBoxImgView(allImg, countTarget);
 };
