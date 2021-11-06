@@ -111,7 +111,7 @@ function onOpenModal(event) {
   event.preventDefault();
   const target = event.target;
   const numberTarget = [...refs.galleryList.childNodes].indexOf(target.parentNode.parentNode, 0);
-  countTarget = numberTarget/2;
+  countTarget = numberTarget / 2;
   if (target.nodeName !== "IMG") return;
   window.addEventListener('keydown', onKeyPress);
   closeModalBtn.addEventListener('click', onCloseModal);
@@ -124,7 +124,8 @@ function onOpenModal(event) {
 };
 
 function onCloseModal() {
-  lightBoxImg("", "")
+  allImg = '';
+  lightBoxImg('', '');
   window.removeEventListener('keydown', onKeyPress);
   lightBoxModal.removeEventListener('click', onOverlayClick);
   closeModalBtn.removeEventListener('click', onCloseModal);
@@ -145,23 +146,15 @@ function onKeyPress(event) {
       break;
     };
     case 'ArrowLeft': {
-      if (countTarget > 0) countTarget -= 1;
+      if (countTarget <= 0) countTarget = allImg.length;
+      countTarget -= 1;
       break;
     };
     case 'ArrowRight': {
-      if (countTarget < allImg.length - 1) countTarget += 1;
+      if (countTarget >= allImg.length - 1) countTarget = -1;
+      countTarget += 1;
       break;
     };
-    // case 'ArrowDown': {
-    //   if (countTarget <= 0) countTarget = allImg.length;
-    //   countTarget -= 1;
-    //   break;
-    // };
-    // case 'ArrowUp': {
-    //   if (countTarget >= allImg.length - 1) countTarget = -2;
-    //   countTarget += 1;
-    //   break;
-    // };
   };
   lightBoxImgView(allImg, countTarget);
 };
