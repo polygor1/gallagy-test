@@ -12,7 +12,8 @@ let searshDate = {
       perPage : 12,
       imgType : 'photo',
       orient : 'horizontal',
-    };
+};
+    
 // ========= main start ===========
 
 // Вводим строку в input и ждем
