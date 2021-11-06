@@ -6,7 +6,6 @@ import {refs} from './js/refs';
 import imgTemplate from './template/imgCard';
 import getList from './js/getList';
 
-// const allImg = refs.galleryList.querySelectorAll(".photo-img");
 const lightBoxModal = document.querySelector(".js-lightbox");
 const closeModalBtn = lightBoxModal.querySelector('[data-action="close-lightbox"]');
 
@@ -146,23 +145,23 @@ function onKeyPress(event) {
       break;
     };
     case 'ArrowLeft': {
-      if (countTarget > 0) countTarget -= 2;
+      if (countTarget > 0) countTarget -= 1;
       break;
     };
     case 'ArrowRight': {
-      if (countTarget < allImg.length - 2) countTarget += 2;
+      if (countTarget < allImg.length - 1) countTarget += 1;
       break;
     };
-    case 'ArrowDown': {
-      if (countTarget <= 0) countTarget = allImg.length;
-      countTarget -= 2;
-      break;
-    };
-    case 'ArrowUp': {
-      if (countTarget >= allImg.length - 2) countTarget = -2;
-      countTarget += 2;
-      break;
-    };
+    // case 'ArrowDown': {
+    //   if (countTarget <= 0) countTarget = allImg.length;
+    //   countTarget -= 1;
+    //   break;
+    // };
+    // case 'ArrowUp': {
+    //   if (countTarget >= allImg.length - 1) countTarget = -2;
+    //   countTarget += 1;
+    //   break;
+    // };
   };
   lightBoxImgView(allImg, countTarget);
 };
