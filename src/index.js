@@ -1,5 +1,6 @@
 import './sass/main.scss';
 const debounce = require('lodash.debounce');
+const throttle = require('lodash.throttle');
 
 import error from './js/pnotify';
 import {refs} from './js/refs';
@@ -27,25 +28,25 @@ let countTarget = 0;
 refs.input.addEventListener('input',
   debounce(getSearchString, 750),
 );
-// почти вечный scroll 
-window.addEventListener("scroll", function(){
+// почти бесконечный scroll 
+window.addEventListener("scroll", throttle(() => {
   const block = document.getElementById('infinite-scroll');
-  // console.log(block)
-  let y = 0;
   const contentHeight = block.offsetHeight; // высота блока контента вместе с границами
-  let yOffset       = window.pageYOffset;   // текущее положение скролбара
+  let y = 0;  
+  let yOffset = window.pageYOffset;   // текущее положение скролбара
   let window_height = window.innerHeight;   // высота внутренней области окна документа
   y = Math.max(y, Math.ceil(yOffset + window_height)); // шаманство
   // если доскролил до конца загруженного массива
+  if (searshDate.page <= 1) return;
   if (y >= contentHeight) {
-    searshDate.page += 1;
     getList({ ...searshDate })
     .then(array => showResult(array))
     .catch(error => errorRequest(error));
   }
-});
+}, 750), ); //задержка после достижения конца загруженного массива
 
-console.log('ales gut!')
+console.log('Ales gut!')
+
 // ========= main end =============
 
 // Проверяем значение с инпута 
@@ -66,14 +67,19 @@ function getSearchString(event) {
     .then(array => showResult(array))
     .catch(error => errorRequest(error));
 };
+
 // Выводим значение 
 function showResult(array) {
+  if (array.length === 0) return;
+  // console.log('page =', searshDate.page)
   // Добавляем новую разметку для элементов
   const markup = imgTemplate(array);
   refs.elementContainer.insertAdjacentHTML('beforeend', markup);
+  searshDate.page += 1;
   // слушаем клик по галлерее
   refs.galleryList.addEventListener("click", onOpenModal);
 };
+
 // сообщние об ошибке
 function errorRequest(message){
   error({
