@@ -154,13 +154,16 @@ function onKeyPress(event) {
     case 'ArrowLeft': {
       if (countTarget <= 0) countTarget = allImg.length;
       countTarget -= 1;
+        lightBoxImgView(allImg, countTarget);
       break;
     };
     case 'ArrowRight': {
       if (countTarget >= allImg.length - 1) countTarget = -1;
       countTarget += 1;
+        lightBoxImgView(allImg, countTarget);
       break;
     };
   };
-  lightBoxImgView(allImg, countTarget);
+  // console.log('rrrrr')
+  // lightBoxImgView(allImg, countTarget);
 };
