@@ -11,7 +11,7 @@ const lightBoxModal = document.querySelector(".js-lightbox");
 const closeModalBtn = lightBoxModal.querySelector('[data-action="close-lightbox"]');
 
 let allImg = '';
-
+let ansver = true;
 let searshDate = {
       query: '',
       page: 1,
@@ -38,7 +38,7 @@ window.addEventListener("scroll", throttle(() => {
   y = Math.max(y, Math.ceil(yOffset + window_height)); // шаманство
   // если доскролил до конца загруженного массива
   if (searshDate.page <= 1) return;
-  if (y >= contentHeight) {
+  if (y >= contentHeight && ansver) {
     getList({ ...searshDate })
     .then(array => showResult(array))
     .catch(error => errorRequest(error));
@@ -70,12 +70,16 @@ function getSearchString(event) {
 
 // Выводим значение 
 function showResult(array) {
-  if (array.length === 0) return;
-  // console.log('page =', searshDate.page)
+  if (array.length === 0) {
+    ansver = false;
+    return
+  };
+  console.log('page =', searshDate.page)
   // Добавляем новую разметку для элементов
   const markup = imgTemplate(array);
   refs.elementContainer.insertAdjacentHTML('beforeend', markup);
   searshDate.page += 1;
+  ansver = true;
   // слушаем клик по галлерее
   refs.galleryList.addEventListener("click", onOpenModal);
 };
