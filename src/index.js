@@ -12,6 +12,7 @@ const closeModalBtn = lightBoxModal.querySelector('[data-action="close-lightbox"
 
 let allImg = '';
 let ansver = true;
+let viewModal = false;
 let searshDate = {
       query: '',
       page: 1,
@@ -25,6 +26,8 @@ let countTarget = 0;
 // ========= main start ===========
 
 // Вводим строку в input и ждем
+window.addEventListener('keydown', onKeyPress);
+
 refs.input.addEventListener('input',
   debounce(getSearchString, 750),
 );
@@ -119,11 +122,12 @@ function lightBoxImgView(arrayImg, number) {
 
 function onOpenModal(event) {
   event.preventDefault();
+  viewModal = true;
   const target = event.target;
   const numberTarget = [...refs.galleryList.childNodes].indexOf(target.parentNode.parentNode, 0);
   countTarget = numberTarget / 2;
   if (target.nodeName !== "IMG") return;
-  window.addEventListener('keydown', onKeyPress);
+  // window.addEventListener('keydown', onKeyPress);
   closeModalBtn.addEventListener('click', onCloseModal);
   lightBoxModal.addEventListener('click', onOverlayClick);
   lightBoxModal.classList.add('is-open');
@@ -134,9 +138,10 @@ function onOpenModal(event) {
 };
 
 function onCloseModal() {
+  viewModal = false;
   allImg = '';
   lightBoxImg('', '');
-  window.removeEventListener('keydown', onKeyPress);
+  // window.removeEventListener('keydown', onKeyPress);
   lightBoxModal.removeEventListener('click', onOverlayClick);
   closeModalBtn.removeEventListener('click', onCloseModal);
   lightBoxModal.classList.remove('is-open');
@@ -152,22 +157,23 @@ function onOverlayClick(event) {
 function onKeyPress(event) {
   switch (event.code) {
     case 'Escape': {
-      onCloseModal();
+      if (viewModal) { onCloseModal() } else {
+        clearContent();
+        clearScreen();
+      };
       break;
     };
     case 'ArrowLeft': {
       if (countTarget <= 0) countTarget = allImg.length;
       countTarget -= 1;
-        lightBoxImgView(allImg, countTarget);
+      lightBoxImgView(allImg, countTarget);
       break;
     };
     case 'ArrowRight': {
       if (countTarget >= allImg.length - 1) countTarget = -1;
       countTarget += 1;
-        lightBoxImgView(allImg, countTarget);
+      lightBoxImgView(allImg, countTarget);
       break;
     };
   };
-  // console.log('rrrrr')
-  // lightBoxImgView(allImg, countTarget);
 };
