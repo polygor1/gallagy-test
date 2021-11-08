@@ -26,6 +26,7 @@ let countTarget = 0;
 // ========= main start ===========
 
 // Вводим строку в input и ждем
+searshInput.focus();
 window.addEventListener('keydown', onKeyPress);
 
 refs.input.addEventListener('input',
@@ -157,7 +158,10 @@ function onOverlayClick(event) {
 function onKeyPress(event) {
   switch (event.code) {
     case 'Escape': {
-      if (viewModal) { onCloseModal() } else {
+      if (viewModal) {
+        searshInput.focus();
+        onCloseModal()
+      } else {
         clearContent();
         clearScreen();
       };
