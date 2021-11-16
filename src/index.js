@@ -25,10 +25,9 @@ let countTarget = 0;
 
 // ========= main start ===========
 
-// Вводим строку в input и ждем
 searshInput.focus();
 window.addEventListener('keydown', onKeyPress);
-
+// Вводим строку в input и ждем
 refs.input.addEventListener('input',
   debounce(getSearchString, 750),
 );
@@ -41,7 +40,7 @@ window.addEventListener("scroll", throttle(() => {
   let window_height = window.innerHeight;   // высота внутренней области окна документа
   y = Math.max(y, Math.ceil(yOffset + window_height)); // шаманство
   // если доскролил до конца загруженного массива
-  if (searshDate.page <= 1) return;
+  if (searshDate.page <= 1) return; // если всего одна страница в результатах поиска
   if (y >= contentHeight && ansver) {
     getList({ ...searshDate })
     .then(array => showResult(array))
@@ -55,15 +54,16 @@ console.log('Ales gut!')
 
 // Проверяем значение с инпута 
 function getSearchString(event) {
-// убираем пробелы
-  let inputValue = event.target.value.trim();
+// убираем пробелы // не убираем - поиск по фразе
+  let inputValue = event.target.value;
+    // .trim();
 // если пустая строка - ругаемся
   if (!inputValue) {
     clearContent();
     errorRequest('Invalid request. Please try again');
     return;
   };
-// если норм лезем искать по списку в сети и получаем array или ругаемся
+// если норм лезем искать по БД в сети и получаем array или ругаемся
   searshDate.query = inputValue;
   searshDate.page = 1;
   clearScreen();
@@ -75,10 +75,10 @@ function getSearchString(event) {
 // Выводим значение 
 function showResult(array) {
   if (array.length === 0) {
-    ansver = false;
+    ansver = false; // если ничего не пришло в ответе
     return
   };
-  console.log('page =', searshDate.page)
+  console.log('page =', searshDate.page) // номер листа в ответе
   // Добавляем новую разметку для элементов
   const markup = imgTemplate(array);
   refs.elementContainer.insertAdjacentHTML('beforeend', markup);
@@ -88,7 +88,7 @@ function showResult(array) {
   refs.galleryList.addEventListener("click", onOpenModal);
 };
 
-// сообщние об ошибке
+// сообщение об ошибке
 function errorRequest(message){
   error({
     title: '', 
@@ -110,17 +110,17 @@ function clearContent() {
 };
 
 // ======== light modal ==========
-
+// показ картинки
 function lightBoxImg(original, description) {
   const imgView = document.querySelector(".lightbox__image");
   imgView.setAttribute('src', original);
   imgView.setAttribute('alt', description);
 };
-
+// выковыривание данных для показа
 function lightBoxImgView(arrayImg, number) {
   lightBoxImg(arrayImg[number].dataset.source, arrayImg[number].alt);
 };
-
+// открытие модалки для увеличенного показа
 function onOpenModal(event) {
   event.preventDefault();
   viewModal = true;
@@ -128,7 +128,6 @@ function onOpenModal(event) {
   const numberTarget = [...refs.galleryList.childNodes].indexOf(target.parentNode.parentNode, 0);
   countTarget = numberTarget / 2;
   if (target.nodeName !== "IMG") return;
-  // window.addEventListener('keydown', onKeyPress);
   closeModalBtn.addEventListener('click', onCloseModal);
   lightBoxModal.addEventListener('click', onOverlayClick);
   lightBoxModal.classList.add('is-open');
@@ -137,24 +136,23 @@ function onOpenModal(event) {
 
   lightBoxImgView(allImg, countTarget);
 };
-
+// закрытие модалки
 function onCloseModal() {
   viewModal = false;
   allImg = '';
   lightBoxImg('', '');
-  // window.removeEventListener('keydown', onKeyPress);
   lightBoxModal.removeEventListener('click', onOverlayClick);
   closeModalBtn.removeEventListener('click', onCloseModal);
   lightBoxModal.classList.remove('is-open');
 };
-
+// клик мимо картинки
 function onOverlayClick(event) {
   const target = event.target;
   if (target.classList.value === "lightbox__overlay") {
     onCloseModal();
   }
 };
-
+// обработка клавиатуры
 function onKeyPress(event) {
   switch (event.code) {
     case 'Escape': {
