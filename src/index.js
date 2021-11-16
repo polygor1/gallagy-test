@@ -20,7 +20,6 @@ let searshDate = {
       imgType : 'photo',
       orient : 'horizontal',
 };
-
 let countTarget = 0;
 
 // ========= main start ===========
@@ -41,14 +40,14 @@ window.addEventListener("scroll", throttle(() => {
   y = Math.max(y, Math.ceil(yOffset + window_height)); // шаманство
   // если доскролил до конца загруженного массива
   if (searshDate.page <= 1) return; // если всего одна страница в результатах поиска
-  if (y >= contentHeight && ansver) {
+  if (y >= contentHeight && ansver) { // если больше одной страницы и предыдущий ответ не был пуст
     getList({ ...searshDate })
     .then(array => showResult(array))
     .catch(error => errorRequest(error));
   }
 }, 750), ); //задержка после достижения конца загруженного массива
 
-console.log('Ales gut!')
+console.log('Ales gut!') // шутка ;-)
 
 // ========= main end =============
 
@@ -96,11 +95,13 @@ function errorRequest(message){
     delay: 2500,  
   }); 
 };
+
 // чистка экрана
 function clearScreen() {
   refs.galleryList.innerHTML = '';
   refs.elementContainer.innerHTML = '';
-}
+};
+
 // чистка контента
 function clearContent() {
   searshDate.page = 1;
@@ -116,10 +117,12 @@ function lightBoxImg(original, description) {
   imgView.setAttribute('src', original);
   imgView.setAttribute('alt', description);
 };
+
 // выковыривание данных для показа
 function lightBoxImgView(arrayImg, number) {
   lightBoxImg(arrayImg[number].dataset.source, arrayImg[number].alt);
 };
+
 // открытие модалки для увеличенного показа
 function onOpenModal(event) {
   event.preventDefault();
@@ -136,6 +139,7 @@ function onOpenModal(event) {
 
   lightBoxImgView(allImg, countTarget);
 };
+
 // закрытие модалки
 function onCloseModal() {
   viewModal = false;
@@ -145,6 +149,7 @@ function onCloseModal() {
   closeModalBtn.removeEventListener('click', onCloseModal);
   lightBoxModal.classList.remove('is-open');
 };
+
 // клик мимо картинки
 function onOverlayClick(event) {
   const target = event.target;
@@ -152,6 +157,7 @@ function onOverlayClick(event) {
     onCloseModal();
   }
 };
+
 // обработка клавиатуры
 function onKeyPress(event) {
   switch (event.code) {
