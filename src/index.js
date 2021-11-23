@@ -101,18 +101,11 @@ function showResult(array) {
 
 // Индикатор задержки загрузки
 function delayIndicator(array, classConteiner, classImg) {
-  console.log(array)
   array.forEach(element => {
-
-  // console.log(element)
-    
     // если разметки нет то
     if (!element.getElementsByClassName('delay-indicator')[0]) { 
       // вставляем разметку индикатора в HTML 
       const cardItem = element.getElementsByClassName(classConteiner)[0];
-
-      // console.log(cardItem)
-
       cardItem.insertAdjacentHTML('afterbegin', beautiSpinner());
 
       const delayIndicator = element.getElementsByClassName('delay-indicator')[0];
