@@ -1,0 +1,78 @@
+/* Lightbox */
+
+.lightbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--animation-duration) var(--timing-function);
+
+
+&.is-open {
+  opacity: 1;
+  pointer-events: initial;
+}
+
+&__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.85);
+}
+
+&__content {
+  margin-top: 88px;
+  transform: scale(0.25);
+  transition: transform var(--animation-duration) var(--timing-function);
+}
+
+&.is-open &__content {
+  transform: scale(1);
+}
+
+&__image {
+  display: flex;
+  align-items: center;
+  width: auto;
+  height: auto;
+  max-height: 92vh;
+  max-width: 95vw;
+}
+
+&__button {
+  position: absolute;
+  top: 110px;
+  right: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: 50%;
+  background-color: rgb(151, 0, 0);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color var(--animation-duration) var(--timing-function);
+  outline: none;
+  background-image: url('../images/icon-close.svg');
+  background-position: center;
+  background-size: 60%;
+  background-repeat: no-repeat;
+}
+
+&__button:hover,
+&__button:focus {
+  background-color: rgba(255, 0, 149, 0.703);
+}
+}

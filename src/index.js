@@ -5,7 +5,11 @@ const throttle = require('lodash.throttle');
 import error from './js/pnotify';
 import {refs} from './js/refs';
 import imgTemplate from './template/imgCard';
+import beautiSpinner from './template/spiner';
 import getList from './js/getList';
+
+// import {spin} from './js/spiner';
+// console.log(spin)
 
 const lightBoxModal = document.querySelector(".js-lightbox");
 const closeModalBtn = lightBoxModal.querySelector('[data-action="close-lightbox"]');
@@ -47,7 +51,7 @@ window.addEventListener("scroll", throttle(() => {
   }
 }, 750), ); //задержка после достижения конца загруженного массива
 
-console.log('Ales gut!') // шутка ;-)
+console.log('Ales gut!') // шЮтка ;-)
 
 // ========= main end =============
 
@@ -80,11 +84,39 @@ function showResult(array) {
   console.log('page =', searshDate.page) // номер листа в ответе
   // Добавляем новую разметку для элементов
   const markup = imgTemplate(array);
+  // console.log(markup)
   refs.elementContainer.insertAdjacentHTML('beforeend', markup);
+  
+  // Добавляем индикатор задержки загрузки
+
+  const onLoadGallery = document.querySelectorAll('.gallery__item');
+  // console.log(onLoadGallery)
+  delayIndicator(onLoadGallery, "photo-card")
+
   searshDate.page += 1;
   ansver = true;
   // слушаем клик по галлерее
   refs.galleryList.addEventListener("click", onOpenModal);
+};
+
+// Индикатор задержки загрузки
+function delayIndicator(array, classLink) {
+  array.forEach(element => {
+    // если разметки нет то
+    if (!element.getElementsByClassName('delay-indicator')[0]) { 
+      // вставляем разметку индикатора в HTML 
+      const cardItem = element.getElementsByClassName(classLink)[0];
+      cardItem.insertAdjacentHTML('afterbegin', beautiSpinner());
+
+      const delayIndicator = element.getElementsByClassName('delay-indicator')[0];
+      const imgPhoto = element.getElementsByClassName('photo-img')[0];
+
+      delayIndicator.classList.remove('is-hidden'); // показываем индикатор
+      imgPhoto.onload = function () { // ловим событие окончания загрузки
+        delayIndicator.classList.add('is-hidden'); // посмотрели и хватит
+      };
+    };
+  });
 };
 
 // сообщение об ошибке
@@ -189,3 +221,4 @@ function onKeyPress(event) {
     };
   };
 };
+
