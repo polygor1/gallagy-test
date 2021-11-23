@@ -7,10 +7,7 @@ import {refs} from './js/refs';
 import imgTemplate from './template/imgCard';
 import beautiSpinner from './template/spiner';
 import getList from './js/getList';
-import { pull } from 'lodash';
-
-// import {spin} from './js/spiner';
-// console.log(spin)
+// import { pull } from 'lodash';
 
 const lightBoxModal = document.querySelector(".js-lightbox");
 const closeModalBtn = lightBoxModal.querySelector('[data-action="close-lightbox"]');
@@ -90,7 +87,7 @@ function showResult(array) {
   
   // Добавляем индикатор задержки загрузки
   const onLoadGallery = document.querySelectorAll('.gallery__item');
-  delayIndicator(onLoadGallery, "photo-card", 'photo-img')
+  delayIndicator(onLoadGallery, "photo-card", 'photo-img', false)
 
   searshDate.page += 1; // макароны
   ansver = true;
@@ -100,22 +97,28 @@ function showResult(array) {
 };
 
 // Индикатор задержки загрузки
-function delayIndicator(array, classConteiner, classImg) {
+function delayIndicator(array, classConteiner, classImg, permit) {
+
   array.forEach(element => {
     // если разметки нет то
     if (!element.getElementsByClassName('delay-indicator')[0]) { 
       // вставляем разметку индикатора в HTML 
       const cardItem = element.getElementsByClassName(classConteiner)[0];
       cardItem.insertAdjacentHTML('afterbegin', beautiSpinner());
+      permit = true;
+    };
+    // анализируем код и
+    const delayIndicator = element.getElementsByClassName('delay-indicator')[0];
+    const imgPhoto = element.getElementsByClassName(classImg)[0];
 
-      const delayIndicator = element.getElementsByClassName('delay-indicator')[0];
-      const imgPhoto = element.getElementsByClassName(classImg)[0];
-
+    if (permit) {
       delayIndicator.classList.remove('is-hidden'); // показываем индикатор
       imgPhoto.onload = function () { // ловим событие окончания загрузки
         delayIndicator.classList.add('is-hidden'); // посмотрели и хватит
       };
+      permit = false; // разок посмотрели и хватит
     };
+    // delayIndicator.classList.add('is-hidden'); // посмотрели и хватит
   });
 };
 
@@ -154,8 +157,9 @@ function lightBoxImg(original, description) {
   const imgView = document.querySelector(".lightbox__image");
   imgView.setAttribute('src', original);
   imgView.setAttribute('alt', description);
-
-  delayIndicator(document.querySelectorAll(".lightbox"), 'lightbox__content', 'lightbox__image');
+  if (original === '' && description === '') return;
+  delayIndicator(document.querySelectorAll(".lightbox"), 'lightbox__content', 'lightbox__image', true);
+  
 };
 
 // открытие модалки для увеличенного показа
@@ -183,6 +187,7 @@ function onCloseModal() {
   lightBoxModal.removeEventListener('click', onOverlayClick);
   closeModalBtn.removeEventListener('click', onCloseModal);
   lightBoxModal.classList.remove('is-open');
+
 };
 
 // клик мимо картинки
