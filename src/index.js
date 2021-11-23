@@ -7,6 +7,7 @@ import {refs} from './js/refs';
 import imgTemplate from './template/imgCard';
 import beautiSpinner from './template/spiner';
 import getList from './js/getList';
+import { pull } from 'lodash';
 
 // import {spin} from './js/spiner';
 // console.log(spin)
@@ -82,34 +83,40 @@ function showResult(array) {
     return
   };
   console.log('page =', searshDate.page) // номер листа в ответе
-  // Добавляем новую разметку для элементов
+
+  // Добавляем новую разметку для элементов галлереи
   const markup = imgTemplate(array);
-  // console.log(markup)
   refs.elementContainer.insertAdjacentHTML('beforeend', markup);
   
   // Добавляем индикатор задержки загрузки
-
   const onLoadGallery = document.querySelectorAll('.gallery__item');
-  // console.log(onLoadGallery)
-  delayIndicator(onLoadGallery, "photo-card")
+  delayIndicator(onLoadGallery, "photo-card", 'photo-img')
 
-  searshDate.page += 1;
+  searshDate.page += 1; // макароны
   ansver = true;
+
   // слушаем клик по галлерее
   refs.galleryList.addEventListener("click", onOpenModal);
 };
 
 // Индикатор задержки загрузки
-function delayIndicator(array, classLink) {
+function delayIndicator(array, classConteiner, classImg) {
+  console.log(array)
   array.forEach(element => {
+
+  // console.log(element)
+    
     // если разметки нет то
     if (!element.getElementsByClassName('delay-indicator')[0]) { 
       // вставляем разметку индикатора в HTML 
-      const cardItem = element.getElementsByClassName(classLink)[0];
+      const cardItem = element.getElementsByClassName(classConteiner)[0];
+
+      // console.log(cardItem)
+
       cardItem.insertAdjacentHTML('afterbegin', beautiSpinner());
 
       const delayIndicator = element.getElementsByClassName('delay-indicator')[0];
-      const imgPhoto = element.getElementsByClassName('photo-img')[0];
+      const imgPhoto = element.getElementsByClassName(classImg)[0];
 
       delayIndicator.classList.remove('is-hidden'); // показываем индикатор
       imgPhoto.onload = function () { // ловим событие окончания загрузки
@@ -143,16 +150,19 @@ function clearContent() {
 };
 
 // ======== light modal ==========
+
+// выковыривание данных для показа
+function lightBoxImgView(arrayImg, number) {
+  lightBoxImg(arrayImg[number].dataset.source, arrayImg[number].alt);
+};
+
 // показ картинки
 function lightBoxImg(original, description) {
   const imgView = document.querySelector(".lightbox__image");
   imgView.setAttribute('src', original);
   imgView.setAttribute('alt', description);
-};
 
-// выковыривание данных для показа
-function lightBoxImgView(arrayImg, number) {
-  lightBoxImg(arrayImg[number].dataset.source, arrayImg[number].alt);
+  delayIndicator(document.querySelectorAll(".lightbox"), 'lightbox__content', 'lightbox__image');
 };
 
 // открытие модалки для увеличенного показа
